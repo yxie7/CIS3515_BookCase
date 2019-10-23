@@ -1,12 +1,16 @@
 package edu.temple.cis3515_bookcase;
 
+import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -14,7 +18,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BookListFragment.OnFragmentInteractionListener} interface
+ * {@link OnListClickListener} interface
  * to handle interaction events.
  * Use the {@link BookListFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -22,12 +26,12 @@ import java.util.ArrayList;
 public class BookListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_BOOKS = "Books";
+    public static final String ARG_BOOKS = "books";
 
     // TODO: Rename and change types of parameters
     private ArrayList<String> books;
 
-    private OnFragmentInteractionListener mListener;
+    private OnListClickListener mListener;
 
     public BookListFragment() {
         // Required empty public constructor
@@ -40,11 +44,9 @@ public class BookListFragment extends Fragment {
      * @return A new instance of fragment BookListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BookListFragment newInstance(String param1, String param2) {
+    public static BookListFragment newInstance(Bundle b) {
         BookListFragment fragment = new BookListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_BOOKS, param1);
-        fragment.setArguments(args);
+        fragment.setArguments(b);
         return fragment;
     }
 
@@ -52,7 +54,7 @@ public class BookListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            books = getArguments().getStringArrayList(ARG_BOOKS);
+            //books = getArguments().getStringArrayList(ARG_BOOKS);
         }
     }
 
@@ -62,26 +64,35 @@ public class BookListFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_book_list, container, false);
 
+        ListView lv = ((ListView)v.findViewById(R.id.lvBooks));
+
+        lv.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.fragment_book_list, getArguments().getStringArrayList("ARGS_BOOKS")));
+        lv.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.displayBookDetails(((TextView) view).getText().toString());
+            }
+        });
 
 
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    // TODO:  probably don't need this Rename method, update argument and hook method into UI event
+    public void onButtonPressed(String uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.displayBookDetails(uri);
         }
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnListClickListener) {
+            mListener = (OnListClickListener) activity;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(activity.toString()
+                    + " must implement OnListClickListener");
         }
     }
 
@@ -101,8 +112,8 @@ public class BookListFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnListClickListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void displayBookDetails(String index);
     }
 }
