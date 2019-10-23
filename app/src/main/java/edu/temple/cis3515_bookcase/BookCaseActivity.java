@@ -20,6 +20,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         ArrayList<String> books = new ArrayList<>(10);
         books.addAll(Arrays.asList(b));
 
+
         Bundle args = new Bundle();
         args.putStringArrayList(BookListFragment.ARG_BOOKS, books);
 
