@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">CIS3515_BookCase</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="books">
+        <item>The Guardians</item>
+        <item>The Night Fire</item>
+        <item>The Pioneer Woman Cooks</item>
+        <item>Three Days at the Brink</item>
+        <item>Dumpty: The Age of Trump in Verse</item>
+        <item>Me</item>
+        <item>Touched by the Sun: My Friendship with Jackie</item>
+        <item>The Burning White</item>
+        <item>The Rule</item>
+        <item>After We Collided</item>
+    </string-array>
 </resources>
