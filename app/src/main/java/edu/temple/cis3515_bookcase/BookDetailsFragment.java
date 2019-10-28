@@ -58,7 +58,7 @@ public class BookDetailsFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_book_details, container, false);
         return v;
     }
-
+/*
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -69,7 +69,7 @@ public class BookDetailsFragment extends Fragment {
                     + " must implement OnListClickListener");
         }
     }
-
+*/
     @Override
     public void onDetach() {
         super.onDetach();
@@ -80,11 +80,20 @@ public class BookDetailsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
+/*
     public void displayDetails(int index){
         //assert index > -1;
         TextView tv = (TextView)v.findViewById(R.id.tvDetails);
         tv.setText(getResources().getStringArray(R.array.books)[index]);
+
+    }
+
+    */
+
+    public void displayDetails(String title){
+        //assert index > -1;
+        TextView tv = (TextView)v.findViewById(R.id.tvDetails);
+        tv.setText(title);
 
     }
 }

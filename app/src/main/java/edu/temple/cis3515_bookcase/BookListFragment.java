@@ -70,7 +70,8 @@ public class BookListFragment extends Fragment {
         lv.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListener.displayBookDetails(position);
+                //mListener.displayBookDetails(position);
+                mListener.displayBookDetails(((TextView) view).getText().toString());
             }
         });
 
@@ -104,9 +105,14 @@ public class BookListFragment extends Fragment {
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
-     */
+     **
     public interface OnListClickListener {
         // TODO: Update argument type and name
         void displayBookDetails(int index);
+    }
+     */
+    public interface OnListClickListener {
+        // TODO: Update argument type and name
+        void displayBookDetails(String title);
     }
 }
