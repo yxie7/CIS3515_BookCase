@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        android:configChanges="orientation|screenLayout|screenSize"
         <activity android:name=".BookCaseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

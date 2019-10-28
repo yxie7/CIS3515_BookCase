@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +29,7 @@ public class ViewPagerFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private ArrayList<String> books;
-
+    ArrayList<Fragment> fragments;
     ViewPager vp;
 
     private OnFragmentInteractionListener mListener;
@@ -63,7 +65,15 @@ public class ViewPagerFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_view_pager, container, false);
 
+        for (int i = 0; i < books.size(); i++) {
+            Fragment bdf = BookDetailsFragment.newInstance(books.get(i));
+            fragments.add(bdf);
+        }
+        ViewPagerAdapter vpa = new ViewPagerAdapter(getFragmentManager(),fragments);
 
+        vp = v.findViewById(R.id.vp);
+        vp.setAdapter(vpa);
+        //vp.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
 
         return v;
     }

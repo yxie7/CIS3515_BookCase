@@ -5,4 +5,12 @@
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookCaseActivity" />
+    tools:context=".BookCaseActivity" >
+
+    <FrameLayout
+        android:id="@+id/viewPagerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

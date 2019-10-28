@@ -7,30 +7,24 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/bookListFragment"
-        android:layout_width="431dp"
-        android:layout_height="431dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
+        android:id="@+id/bookDetailsContainer"
+        android:layout_width="540dp"
+        android:layout_height="544dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/bookDetailsFragment"
+        app:layout_constraintEnd_toStartOf="@+id/bookListContainer"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/bookListContainer"
+        android:layout_width="425dp"
+        android:layout_height="408dp"
+        android:layout_marginStart="137dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bookDetailsContainer"
         app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/bookDetailsFragment"
-        android:layout_width="431dp"
-        android:layout_height="431dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/bookListFragment"
-        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
