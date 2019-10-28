@@ -1,16 +1,13 @@
 package edu.temple.cis3515_bookcase;
 
-import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -18,12 +15,12 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnListClickListener} interface
+ * {@link ViewPagerFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link BookListFragment#newInstance} factory method to
+ * Use the {@link ViewPagerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BookListFragment extends Fragment {
+public class ViewPagerFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_BOOKS = "books";
@@ -31,9 +28,11 @@ public class BookListFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private ArrayList<String> books;
 
-    private OnListClickListener mListener;
+    ViewPager vp;
 
-    public BookListFragment() {
+    private OnFragmentInteractionListener mListener;
+
+    public ViewPagerFragment() {
         // Required empty public constructor
     }
 
@@ -41,11 +40,11 @@ public class BookListFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment BookListFragment.
+     * @return A new instance of fragment ViewPagerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BookListFragment newInstance(Bundle b) {
-        BookListFragment fragment = new BookListFragment();
+    public static ViewPagerFragment newInstance(Bundle b) {
+        ViewPagerFragment fragment = new ViewPagerFragment();
         fragment.setArguments(b);
         return fragment;
     }
@@ -62,30 +61,21 @@ public class BookListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_book_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_view_pager, container, false);
 
-        ListView lv = ((ListView)v.findViewById(R.id.lvBooks));
-
-        lv.setAdapter(new ListAdapter(getActivity(),books));
-        lv.setOnItemClickListener(new ListView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListener.displayBookDetails(position);
-            }
-        });
 
 
         return v;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof OnListClickListener) {
-            mListener = (OnListClickListener) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnListClickListener");
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -105,8 +95,8 @@ public class BookListFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListClickListener {
+    public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void displayBookDetails(int index);
+        void onFragmentInteraction(Uri uri);
     }
 }

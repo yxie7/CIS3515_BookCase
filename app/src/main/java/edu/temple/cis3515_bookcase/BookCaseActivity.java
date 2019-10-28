@@ -1,6 +1,5 @@
 package edu.temple.cis3515_bookcase;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -11,13 +10,19 @@ import java.util.Arrays;
 
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener{
 
+    Boolean twoPanes;
+    ArrayList<String> books;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookcase);
 
+        twoPanes = (findViewById(R.id.bookDetailsFragment) != null);
+
+
         String[] b = getResources().getStringArray(R.array.books);
-        ArrayList<String> books = new ArrayList<>(10);
+        books = new ArrayList<>(b.length);
         books.addAll(Arrays.asList(b));
 
 
@@ -25,12 +30,14 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         args.putStringArrayList(BookListFragment.ARG_BOOKS, books);
 
         Fragment blf = BookListFragment.newInstance(args);
-        getSupportFragmentManager().beginTransaction().replace(R.id.bookListContainer,blf).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.bookListFragment,blf).commit();
+
 
     }
 
     @Override
-    public void displayBookDetails(String index) {
-        Log.d("bookindex",index);
+    public void displayBookDetails(int index) {
+        Log.d("bookindex",Integer.toString(index));
     }
+
 }

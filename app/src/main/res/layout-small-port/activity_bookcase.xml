@@ -6,13 +6,9 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/bookListContainer"
+        android:id="@+id/viewPagerFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
