@@ -22,8 +22,6 @@ public class BookDetailsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String details;
 
-    private OnFragmentInteractionListener mListener;
-
     public BookDetailsFragment() {
         // Required empty public constructor
     }
@@ -56,31 +54,13 @@ public class BookDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_book_details, container, false);
+
+        TextView tv = (TextView)v.findViewById(R.id.tvDetails);
+        tv.setText(details);
         return v;
     }
-/*
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListClickListener");
-        }
-    }
-*/
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-/*
+
     public void displayDetails(int index){
         //assert index > -1;
         TextView tv = (TextView)v.findViewById(R.id.tvDetails);
@@ -88,7 +68,6 @@ public class BookDetailsFragment extends Fragment {
 
     }
 
-    */
 
     public void displayDetails(String title){
         //assert index > -1;

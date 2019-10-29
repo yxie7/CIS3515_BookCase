@@ -28,9 +28,11 @@ public class ViewPagerFragment extends Fragment {
     public static final String ARG_BOOKS = "books";
 
     // TODO: Rename and change types of parameters
-    private ArrayList<String> books;
+    ArrayList<String> books;
     ArrayList<Fragment> fragments;
+
     ViewPager vp;
+    ViewPagerAdapter vpa;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,11 +67,12 @@ public class ViewPagerFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_view_pager, container, false);
 
+        fragments = new ArrayList<>(books.size());
         for (int i = 0; i < books.size(); i++) {
             Fragment bdf = BookDetailsFragment.newInstance(books.get(i));
             fragments.add(bdf);
         }
-        ViewPagerAdapter vpa = new ViewPagerAdapter(getFragmentManager(),fragments);
+        vpa = new ViewPagerAdapter(getChildFragmentManager(),fragments);
 
         vp = v.findViewById(R.id.vp);
         vp.setAdapter(vpa);
