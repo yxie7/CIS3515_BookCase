@@ -15,24 +15,14 @@ import org.w3c.dom.Text;
 public class BookDetailsFragment extends Fragment {
     View v;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_DETAILS = "details_displayed";
 
-    // TODO: Rename and change types of parameters
     private String details;
 
     public BookDetailsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment BookDetailsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static BookDetailsFragment newInstance(String b) {
         BookDetailsFragment fragment = new BookDetailsFragment();
         Bundle args = new Bundle();

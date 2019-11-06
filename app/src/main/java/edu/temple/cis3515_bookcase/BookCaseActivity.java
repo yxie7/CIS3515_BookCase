@@ -3,12 +3,11 @@ package edu.temple.cis3515_bookcase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-    public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener {
+public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener {
 
     Boolean twoPanes;
     ArrayList<String> books;
@@ -38,21 +37,17 @@ import java.util.Arrays;
             Fragment vpf = ViewPagerFragment.newInstance(args_books);
             getSupportFragmentManager().beginTransaction().replace(R.id.viewPagerContainer, vpf).commit();
         }
-
-
     }
-/*
+    /*
+        @Override
+        public void displayBookDetails(int index) {
+            Log.d("bookindex", Integer.toString(index));
+
+            ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookDetailsContainer)).displayDetails(index);
+        }
+    */
     @Override
-    public void displayBookDetails(int index) {
-        Log.d("bookindex", Integer.toString(index));
-
-        ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookDetailsContainer)).displayDetails(index);
+    public void displayBookDetails(String title) {
+        ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookDetailsContainer)).displayDetails(title);
     }
-*/
-@Override
-public void displayBookDetails(String title) {
-    Log.d("bookindex", title);
-
-    ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookDetailsContainer)).displayDetails(title);
-}
 }
