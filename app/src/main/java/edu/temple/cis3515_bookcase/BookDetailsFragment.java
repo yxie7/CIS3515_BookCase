@@ -17,7 +17,7 @@ public class BookDetailsFragment extends Fragment {
 
     public static final String ARG_DETAILS = "details_displayed";
 
-    private String details;
+    private Book book;
 
     public BookDetailsFragment() {
         // Required empty public constructor
@@ -35,7 +35,7 @@ public class BookDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            details = getArguments().getString(ARG_DETAILS);
+            book = getArguments().getParcelable(ARG_DETAILS);
         }
     }
 
