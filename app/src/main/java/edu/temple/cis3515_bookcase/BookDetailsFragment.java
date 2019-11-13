@@ -45,24 +45,23 @@ public class BookDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_book_details, container, false);
 
-        TextView tv = (TextView)v.findViewById(R.id.tvDetails);
-        tv.setText(details);
+        TextView tvTitle = (TextView)v.findViewById(R.id.tvTitle);
+        tvTitle.setText(book.getTitle());
         return v;
     }
 
 
     public void displayDetails(int index){
         //assert index > -1;
-        TextView tv = (TextView)v.findViewById(R.id.tvDetails);
-        tv.setText(getResources().getStringArray(R.array.books)[index]);
+        TextView tvTitle = (TextView)v.findViewById(R.id.tvTitle);
 
     }
 
 
     public void displayDetails(String title){
         //assert index > -1;
-        TextView tv = (TextView)v.findViewById(R.id.tvDetails);
-        tv.setText(title);
+        TextView tvTitle = (TextView)v.findViewById(R.id.tvTitle);
+        tvTitle.setText(title);
 
     }
 }

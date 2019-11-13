@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class BookListFragment extends Fragment {
     public static final String ARG_BOOKS = "books";
 
-    private ArrayList<Book> books;
+    private ArrayList<String> books;
 
     private OnListClickListener mListener;
 

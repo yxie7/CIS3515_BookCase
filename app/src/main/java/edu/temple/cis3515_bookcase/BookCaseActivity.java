@@ -6,7 +6,12 @@ import android.os.Message;
 import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -19,41 +24,54 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
     Boolean twoPanes;
     ArrayList<Book> books;
+    EditText etSearch;
+    Button btnSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookcase);
+        etSearch = (EditText)findViewById(R.id.etSearch);
+        btnSearch = (Button)findViewById(R.id.btnSearch);
 
-        final String search = "";
-        Thread t = new Thread() {
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                URL url;
-                try {
-                    url = new URL(" https://kamorris.com/lab/audlib/booksearch.php?search=" + search);
-                    BufferedReader r = new BufferedReader(
-                            new InputStreamReader(
-                                    url.openStream()));
-                    String response = "", tmpResponse;
-                    tmpResponse = r.readLine();
-                    while (tmpResponse != null) {
-                        response = response + tmpResponse;
-                        tmpResponse = r.readLine();
+            public void onClick(View v) {
+                final String search = etSearch.getText().toString();
+                books = new ArrayList<>();
+                Thread t = new Thread() {
+                    @Override
+                    public void run() {
+                        URL url;
+                        try {
+                            url = new URL(" https://kamorris.com/lab/audlib/booksearch.php?search=" + search);
+                            BufferedReader r = new BufferedReader(
+                                    new InputStreamReader(
+                                            url.openStream()));
+                            String response = "", tmpResponse;
+                            tmpResponse = r.readLine();
+                            while (tmpResponse != null) {
+                                response = response + tmpResponse;
+                                tmpResponse = r.readLine();
+                            }
+                            Log.d("js",response.toString());
+
+                            JSONArray booksArray = new JSONArray(response);
+                            Message msg = Message.obtain();
+                            msg.obj = booksArray;
+                            responseHandler.sendMessage(msg);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-
-                    JSONObject booksObject = new JSONObject(response);
-                    Message msg = Message.obtain();
-                    msg.obj = response;
-
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                };
+                t.start();
             }
-        };
+        });
 
+
+/*
         twoPanes = (findViewById(R.id.bookDetailsContainer) != null);
 
         Bundle args_books = new Bundle();
@@ -70,16 +88,9 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             Fragment vpf = ViewPagerFragment.newInstance(args_books);
             getSupportFragmentManager().beginTransaction().replace(R.id.viewPagerContainer, vpf).commit();
         }
+        */
     }
 
-    /*
-        @Override
-        public void displayBookDetails(int index) {
-            Log.d("bookindex", Integer.toString(index));
-
-            ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookDetailsContainer)).displayDetails(index);
-        }
-    */
     @Override
     public void displayBookDetails(String title) {
         ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookDetailsContainer)).displayDetails(title);
@@ -88,13 +99,22 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     Handler responseHandler = new Handler((new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            JSONObject responseObject = (JSONObject)msg.obj;
+
+            JSONArray responseArray = (JSONArray)msg.obj;
             try{
-                c
+                for (int i = 0; i<responseArray.length(); i++){
+                    int book_id = responseArray.getJSONObject(i).getInt("book_id");
+                    String title = responseArray.getJSONObject(i).getString("title");
+                    String author = responseArray.getJSONObject(i).getString("author");
+                    int published = responseArray.getJSONObject(i).getInt("published");
+                    String cover_url = responseArray.getJSONObject(i).getString("cover_url");
+                    Log.d("json","b,t,a,p,c::" + Integer.toString(book_id)+title+author+Integer.toString(published)+cover_url);
+                    books.add(new Book(book_id,title,author,published,cover_url));
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }
             return false;
         }
-    }))
+    }));
 }
