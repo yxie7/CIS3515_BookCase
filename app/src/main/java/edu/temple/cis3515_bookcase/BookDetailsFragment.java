@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -15,18 +16,23 @@ import org.w3c.dom.Text;
 public class BookDetailsFragment extends Fragment {
     View v;
 
-    public static final String ARG_DETAILS = "details_displayed";
+    public static final String ARG_BOOK= "parcelable book string";
 
     private Book book;
+
+    TextView tvTitle;
+    ImageView imgCover;
+    TextView tvAuthor;
+    TextView tvYear;
 
     public BookDetailsFragment() {
         // Required empty public constructor
     }
 
-    public static BookDetailsFragment newInstance(String b) {
+    public static BookDetailsFragment newInstance(Book b) {
         BookDetailsFragment fragment = new BookDetailsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_DETAILS,b);
+        args.putParcelable(ARG_BOOK,b);
         fragment.setArguments(args);
         return fragment;
     }
@@ -35,7 +41,7 @@ public class BookDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            book = getArguments().getParcelable(ARG_DETAILS);
+            book = getArguments().getParcelable(ARG_BOOK);
         }
     }
 
@@ -45,15 +51,23 @@ public class BookDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_book_details, container, false);
 
-        TextView tvTitle = (TextView)v.findViewById(R.id.tvTitle);
-        tvTitle.setText(book.getTitle());
+        displayBook(book);
+
         return v;
     }
 
 
-    public void displayDetails(int index){
+    public void displayBook(Book book){
         //assert index > -1;
-        TextView tvTitle = (TextView)v.findViewById(R.id.tvTitle);
+        tvTitle = (TextView)v.findViewById(R.id.tvTitle);
+        imgCover = (ImageView)v.findViewById(R.id.imgCover);
+        tvAuthor = (TextView)v.findViewById(R.id.tvAuthor);
+        tvYear = (TextView)v.findViewById(R.id.tvYear);
+
+        tvTitle.setText(book.getTitle());
+        //imgCover =
+        tvAuthor.setText(book.getAuthor());
+        tvYear.setText(book.getPublished());
 
     }
 

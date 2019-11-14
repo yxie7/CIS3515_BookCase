@@ -18,7 +18,7 @@ public class ViewPagerFragment extends Fragment {
     public static final String ARG_BOOKS = "books";
 
     // TODO: Rename and change types of parameters
-    ArrayList<String> books;
+    ArrayList<Book> books;
     ArrayList<Fragment> fragments;
     public static int NUM_PAGE = 0;
 
@@ -40,8 +40,7 @@ public class ViewPagerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            books = getArguments().getStringArrayList(ARG_BOOKS);
-            NUM_PAGE = books.size();
+            books = getArguments().getParcelableArrayList(ARG_BOOKS);
         }
     }
 
