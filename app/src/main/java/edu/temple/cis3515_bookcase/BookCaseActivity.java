@@ -1,5 +1,7 @@
 package edu.temple.cis3515_bookcase;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -7,9 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 
@@ -112,19 +117,30 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         public boolean handleMessage(Message msg) {
 
             JSONArray responseArray = (JSONArray) msg.obj;
-            try {
-                for (int i = 0; i < responseArray.length(); i++) {
-                    int book_id = responseArray.getJSONObject(i).getInt("book_id");
-                    String title = responseArray.getJSONObject(i).getString("title");
-                    String author = responseArray.getJSONObject(i).getString("author");
-                    int published = responseArray.getJSONObject(i).getInt("published");
-                    String cover_url = responseArray.getJSONObject(i).getString("cover_url");
-                    Log.d("book", "b,t,a,p,c::" + (book_id) + title + author + (published) + cover_url);
-                    books.add(new Book(book_id, title, author, published, cover_url));
+            if (responseArray.length() > 0) {
+                try {
+                    for (int i = 0; i < responseArray.length(); i++) {
+                        int book_id = responseArray.getJSONObject(i).getInt("book_id");
+                        String title = responseArray.getJSONObject(i).getString("title");
+                        String author = responseArray.getJSONObject(i).getString("author");
+                        int published = responseArray.getJSONObject(i).getInt("published");
+                        String cover_url = responseArray.getJSONObject(i).getString("cover_url");
+                        Log.d("book", "b,t,a,p,c::" + (book_id) + title + author + (published) + cover_url);
+                        books.add(new Book(book_id, title, author, published, cover_url));
+                    }
+                    updateView();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                updateView();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                search = "";
+                Toast t = Toast.makeText(getApplicationContext(), "No results found...\n\nTry something else", Toast.LENGTH_SHORT);
+                t.setGravity(Gravity.CENTER,0,0);
+                View view = t.getView();
+                view.getBackground().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                TextView text = view.findViewById(android.R.id.message);
+                text.setTextColor(Color.WHITE);
+                t.show();
             }
             return false;
         }
@@ -153,7 +169,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             }
             BookListFragment bl = BookListFragment.newInstance(books);
             fm.beginTransaction().replace(R.id.container1, bl).commit();
-            fm.beginTransaction().replace(R.id.container2,BookDetailsFragment.newInstance(books.get(currentBookPosition))).commit();
+            fm.beginTransaction().replace(R.id.container2, BookDetailsFragment.newInstance(books.get(currentBookPosition))).commit();
         }
     }
 }
