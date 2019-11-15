@@ -20,7 +20,7 @@ public class ViewPagerFragment extends Fragment {
     // TODO: Rename and change types of parameters
     ArrayList<Book> books;
     ArrayList<Fragment> fragments;
-    public static int NUM_PAGE = 0;
+    int position;
 
     ViewPager vp;
     BookViewPagerAdapter bvpa;
@@ -68,7 +68,7 @@ public class ViewPagerFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-
+                position = i;
             }
 
             @Override
@@ -86,8 +86,14 @@ public class ViewPagerFragment extends Fragment {
         return v;
     }
 
-    public ArrayList<Book> getBook() {
+    public ArrayList<Book> getBooks() {
         return books;
+    }
+    public int getPosition(){
+        return position;
+    }
+    public void gotoBook(int index){
+        vp.setCurrentItem(index);
     }
 
     public class BookViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -100,8 +106,6 @@ public class ViewPagerFragment extends Fragment {
         public Fragment getItem(int i) {
             // index is the perceived position, while as i is the actual position
             int index = (i - 1) % books.size();
-            Log.d("loop", "getItem: " + i + "," + index);
-
             if (index < 0) {
                 index += books.size();
             }

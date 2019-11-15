@@ -7,18 +7,18 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/btnSearch2"
+        android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="208dp"
         android:text="Search"
-        app:layout_constraintBottom_toBottomOf="@+id/etSearch2"
+        app:layout_constraintBottom_toBottomOf="@+id/etSearch"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etSearch2"
+        app:layout_constraintTop_toTopOf="@+id/etSearch"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/etSearch2"
+        android:id="@+id/etSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="116dp"

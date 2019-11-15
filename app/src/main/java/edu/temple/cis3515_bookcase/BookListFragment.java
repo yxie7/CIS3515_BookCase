@@ -17,6 +17,8 @@ public class BookListFragment extends Fragment {
     public static final String ARG_BOOKS = "books";
 
     private ArrayList<Book> books;
+    int currentBookPosition;
+
 
     private OnListClickListener mListener;
 
@@ -25,8 +27,10 @@ public class BookListFragment extends Fragment {
     }
 
 
-    public static BookListFragment newInstance(Bundle b) {
+    public static BookListFragment newInstance(ArrayList<Book> books) {
         BookListFragment fragment = new BookListFragment();
+        Bundle b = new Bundle();
+        b.putParcelableArrayList(ARG_BOOKS, books);
         fragment.setArguments(b);
         return fragment;
     }
@@ -51,6 +55,7 @@ public class BookListFragment extends Fragment {
         lv.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                currentBookPosition = position;
                 mListener.displayBook(position);
             }
         });
@@ -81,7 +86,11 @@ public class BookListFragment extends Fragment {
         void displayBook(int index);
     }
 
-    public ArrayList<Book> getBook(){
+    public ArrayList<Book> getBooks(){
         return books;
+    }
+
+    public int getPosition(){
+        return currentBookPosition;
     }
 }

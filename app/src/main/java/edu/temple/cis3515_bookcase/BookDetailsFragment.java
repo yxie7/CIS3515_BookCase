@@ -1,7 +1,5 @@
 package edu.temple.cis3515_bookcase;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import com.squareup.picasso.Picasso;
 
 
 public class BookDetailsFragment extends Fragment {
@@ -66,7 +63,7 @@ public class BookDetailsFragment extends Fragment {
             tvYear = (TextView) v.findViewById(R.id.tvYear);
 
             tvTitle.setText(book.getTitle());
-            //imgCover =
+            Picasso.get().load(book.getCoverURL()).into(imgCover);
             tvAuthor.setText(book.getAuthor());
             tvYear.setText(String.valueOf(book.getPublished()));
         }

@@ -23,12 +23,13 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     FragmentManager fm;
     Fragment current1;
     Fragment current2;
-    BookDetailsFragment currentBook;
+    int currentBookPosition = 0;
     Boolean onePane;
     ArrayList<Book> books;
     EditText etSearch;
     Button btnSearch;
     String search = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                     String author = responseArray.getJSONObject(i).getString("author");
                     int published = responseArray.getJSONObject(i).getInt("published");
                     String cover_url = responseArray.getJSONObject(i).getString("cover_url");
-                    Log.d("book", "b,t,a,p,c::" + Integer.toString(book_id) + title + author + Integer.toString(published) + cover_url);
+                    Log.d("book", "b,t,a,p,c::" + (book_id) + title + author + (published) + cover_url);
                     books.add(new Book(book_id, title, author, published, cover_url));
                 }
                 updateView();
@@ -137,15 +138,22 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
         if (onePane) { //if portrait
             if (current1 instanceof BookListFragment) // check if previously had a BookListFragment(landscape mode)
-                books = ((BookListFragment) current1).getBook();
-            fm.beginTransaction().replace(R.id.container1, ViewPagerFragment.newInstance(books)).commit();
+                books = ((BookListFragment) current1).getBooks();
+            ViewPagerFragment vp = ViewPagerFragment.newInstance(books);
+            fm.beginTransaction().replace(R.id.container1, vp).commit();
 
             if (current2 instanceof BookDetailsFragment) // check if a book has previously been selected in from list view
-                currentBookPosition = (BookDetailsFragment) current2.getPosition();
-            else currentBook = BookDetailsFragment.newInstance(books.get(0));
+                currentBookPosition = ((BookListFragment) current1).getPosition();
+            else currentBookPosition = 0;
+            //vp.gotoBook(currentBookPosition);
         } else { // landscape
-            if (current1 instanceof ViewPagerFragment)
-                books = ((ViewPagerFragment) current1).getBook();
+            if (current1 instanceof ViewPagerFragment) {
+                books = ((ViewPagerFragment) current1).getBooks();
+                currentBookPosition = ((ViewPagerFragment) current1).getPosition();
+            }
+            BookListFragment bl = BookListFragment.newInstance(books);
+            fm.beginTransaction().replace(R.id.container1, bl).commit();
+            fm.beginTransaction().replace(R.id.container2,BookDetailsFragment.newInstance(books.get(currentBookPosition))).commit();
         }
     }
 }
