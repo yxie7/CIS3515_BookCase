@@ -17,11 +17,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener {
 
     FragmentManager fm;
+    Fragment current1;
+    Fragment current2;
+    BookDetailsFragment currentBook;
     Boolean onePane;
     ArrayList<Book> books;
     EditText etSearch;
@@ -35,24 +37,24 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         fm = getSupportFragmentManager();
 
         onePane = (findViewById(R.id.container2) == null);
-
         etSearch = (EditText) findViewById(R.id.etSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getBooks();
+                searchBooks();
             }
         });
 
 
-        Bundle args_books = new Bundle();
-        args_books.putParcelableArrayList(BookListFragment.ARG_BOOKS, books);
+        if (savedInstanceState == null) {
+            searchBooks();
+        } else {
+            updateView();
+        }
 
-
-        Fragment vpf = ViewPagerFragment.newInstance(args_books);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container1, vpf).commit();
-/*
+        /*
         if (twoPanes) {
 
             Fragment blf = BookListFragment.newInstance(args_books);
@@ -74,9 +76,9 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     }
 
     // Empties out the ArrayList of books, then searches retrieves and populates it with book from api
-    public void getBooks() {
+    public void searchBooks() {
         books = new ArrayList<>();
-        new Thread() {
+        Thread t = new Thread() {
             @Override
             public void run() {
                 URL url;
@@ -96,12 +98,12 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                     Message msg = Message.obtain();
                     msg.obj = booksArray;
                     responseHandler.sendMessage(msg);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }.start();
+        };
+        t.start();
     }
 
     Handler responseHandler = new Handler((new Handler.Callback() {
@@ -116,15 +118,34 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                     String author = responseArray.getJSONObject(i).getString("author");
                     int published = responseArray.getJSONObject(i).getInt("published");
                     String cover_url = responseArray.getJSONObject(i).getString("cover_url");
-                    Log.d("json", "b,t,a,p,c::" + Integer.toString(book_id) + title + author + Integer.toString(published) + cover_url);
+                    Log.d("book", "b,t,a,p,c::" + Integer.toString(book_id) + title + author + Integer.toString(published) + cover_url);
                     books.add(new Book(book_id, title, author, published, cover_url));
-
-                }                    Log.d("al", Arrays.deepToString(books.toArray()));
-
+                }
+                updateView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return false;
         }
     }));
+
+
+    // called to change what is displayed on screen
+    public void updateView() {
+        current1 = fm.findFragmentById(R.id.container1); // gets references to existing fragments if any
+        current2 = fm.findFragmentById(R.id.container2);
+
+        if (onePane) { //if portrait
+            if (current1 instanceof BookListFragment) // check if previously had a BookListFragment(landscape mode)
+                books = ((BookListFragment) current1).getBook();
+            fm.beginTransaction().replace(R.id.container1, ViewPagerFragment.newInstance(books)).commit();
+
+            if (current2 instanceof BookDetailsFragment) // check if a book has previously been selected in from list view
+                currentBookPosition = (BookDetailsFragment) current2.getPosition();
+            else currentBook = BookDetailsFragment.newInstance(books.get(0));
+        } else { // landscape
+            if (current1 instanceof ViewPagerFragment)
+                books = ((ViewPagerFragment) current1).getBook();
+        }
+    }
 }

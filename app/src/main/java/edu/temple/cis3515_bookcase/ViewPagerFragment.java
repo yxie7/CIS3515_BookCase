@@ -23,15 +23,16 @@ public class ViewPagerFragment extends Fragment {
     public static int NUM_PAGE = 0;
 
     ViewPager vp;
-    ViewPagerAdapter vpa;
     BookViewPagerAdapter bvpa;
 
     public ViewPagerFragment() {
         // Required empty public constructor
     }
 
-    public static ViewPagerFragment newInstance(Bundle b) {
+    public static ViewPagerFragment newInstance(ArrayList<Book> books) {
         ViewPagerFragment fragment = new ViewPagerFragment();
+        Bundle b = new Bundle();
+        b.putParcelableArrayList(ARG_BOOKS, books);
         fragment.setArguments(b);
         return fragment;
     }
@@ -55,7 +56,6 @@ public class ViewPagerFragment extends Fragment {
             Fragment bdf = BookDetailsFragment.newInstance(books.get(i));
             fragments.add(bdf);
         }
-        vpa = new ViewPagerAdapter(getChildFragmentManager(), fragments);
         bvpa = new BookViewPagerAdapter((getChildFragmentManager()));
 
         vp = v.findViewById(R.id.vp);
@@ -82,9 +82,12 @@ public class ViewPagerFragment extends Fragment {
             }
         });
         vp.setCurrentItem(1);
-        //vp.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
 
         return v;
+    }
+
+    public ArrayList<Book> getBook() {
+        return books;
     }
 
     public class BookViewPagerAdapter extends FragmentStatePagerAdapter {

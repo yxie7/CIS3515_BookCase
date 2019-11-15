@@ -6,10 +6,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/btnSearch3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        app:layout_constraintBottom_toBottomOf="@+id/etSearch3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.687"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etSearch3"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/etSearch3"
+        android:layout_width="597dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="44dp"
+        android:autofillHints="Search books"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:id="@+id/container2"
-        android:layout_width="540dp"
-        android:layout_height="544dp"
+        android:layout_width="444dp"
+        android:layout_height="414dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/container1"
         app:layout_constraintStart_toStartOf="parent"

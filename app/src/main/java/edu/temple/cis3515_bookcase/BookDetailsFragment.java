@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,24 +59,17 @@ public class BookDetailsFragment extends Fragment {
 
 
     public void displayBook(Book book){
-        //assert index > -1;
-        tvTitle = (TextView)v.findViewById(R.id.tvTitle);
-        imgCover = (ImageView)v.findViewById(R.id.imgCover);
-        tvAuthor = (TextView)v.findViewById(R.id.tvAuthor);
-        tvYear = (TextView)v.findViewById(R.id.tvYear);
+        if (book != null) {
+            tvTitle = (TextView) v.findViewById(R.id.tvTitle);
+            imgCover = (ImageView) v.findViewById(R.id.imgCover);
+            tvAuthor = (TextView) v.findViewById(R.id.tvAuthor);
+            tvYear = (TextView) v.findViewById(R.id.tvYear);
 
-        tvTitle.setText(book.getTitle());
-        //imgCover =
-        tvAuthor.setText(book.getAuthor());
-        tvYear.setText(book.getPublished());
-
+            tvTitle.setText(book.getTitle());
+            //imgCover =
+            tvAuthor.setText(book.getAuthor());
+            tvYear.setText(String.valueOf(book.getPublished()));
+        }
     }
 
-
-    public void displayDetails(String title){
-        //assert index > -1;
-        TextView tvTitle = (TextView)v.findViewById(R.id.tvTitle);
-        tvTitle.setText(title);
-
-    }
 }

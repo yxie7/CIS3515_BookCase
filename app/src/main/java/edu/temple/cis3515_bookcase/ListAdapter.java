@@ -11,20 +11,20 @@ import java.util.ArrayList;
 public class ListAdapter extends BaseAdapter {
 
     Context context;
-    ArrayList<String> data;
-    public ListAdapter(Context context, ArrayList<String> data){
+    ArrayList<Book> books;
+    public ListAdapter(Context context, ArrayList<Book> data){
         this.context = context;
-        this.data = data;
+        this.books = data;
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return books.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        return books.get(position);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         TextView label = new TextView(context);
         label.setId(position);
-        label.setText(data.get(position));
+        label.setText(books.get(position).getTitle());
         label.setTextSize(20);
         label.setPadding(16, 25, 16, 25);
 

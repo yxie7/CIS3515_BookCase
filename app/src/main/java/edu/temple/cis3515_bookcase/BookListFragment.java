@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class BookListFragment extends Fragment {
     public static final String ARG_BOOKS = "books";
 
-    private ArrayList<String> books;
+    private ArrayList<Book> books;
 
     private OnListClickListener mListener;
 
@@ -35,7 +35,7 @@ public class BookListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            books = getArguments().getStringArrayList(ARG_BOOKS);
+            books = getArguments().getParcelableArrayList(ARG_BOOKS);
         }
     }
 
@@ -79,5 +79,9 @@ public class BookListFragment extends Fragment {
     public interface OnListClickListener {
         // TODO: Update argument type and name
         void displayBook(int index);
+    }
+
+    public ArrayList<Book> getBook(){
+        return books;
     }
 }
