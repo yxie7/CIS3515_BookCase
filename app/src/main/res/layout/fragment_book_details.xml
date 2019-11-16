@@ -5,21 +5,25 @@
     android:id="@+id/container2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#c89a69"
     android:textAlignment="center"
     tools:context=".BookDetailsFragment">
 
     <ImageView
         android:id="@+id/imgCover"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="55dp"
-        android:layout_marginEnd="56dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
         android:adjustViewBounds="false"
-        android:background="#00420202"
+        android:background="#c4ab89"
         android:src="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -30,8 +34,8 @@
         android:textColor="#F44336"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/tvAuthor"
-        app:layout_constraintEnd_toEndOf="@+id/imgCover"
-        app:layout_constraintStart_toStartOf="@+id/imgCover" />
+        app:layout_constraintEnd_toEndOf="@+id/tvAuthor"
+        app:layout_constraintStart_toStartOf="@+id/tvAuthor" />
 
     <TextView
         android:id="@+id/tvAuthor"
@@ -39,22 +43,23 @@
         android:layout_height="wrap_content"
         android:text="Author"
         android:textAlignment="center"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/tvYear"
-        app:layout_constraintEnd_toEndOf="@+id/tvTitle"
-        app:layout_constraintStart_toStartOf="@+id/tvTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/tvYear"
+        app:layout_constraintStart_toStartOf="@+id/tvYear" />
 
     <TextView
         android:id="@+id/tvYear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Year"
         android:textAlignment="center"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvAuthor"
-        app:layout_constraintStart_toStartOf="@+id/tvAuthor"
-        app:layout_constraintTop_toBottomOf="@+id/tvAuthor" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
