@@ -5,7 +5,7 @@
     android:id="@+id/container2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#c89a69"
+    android:background="#CB000000"
     android:textAlignment="center"
     tools:context=".BookDetailsFragment">
 
@@ -18,7 +18,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:adjustViewBounds="false"
-        android:background="#c4ab89"
+        android:background="#39FFFFFF"
         android:src="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
