@@ -125,8 +125,9 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                         String author = responseArray.getJSONObject(i).getString("author");
                         int published = responseArray.getJSONObject(i).getInt("published");
                         String cover_url = responseArray.getJSONObject(i).getString("cover_url");
+                        int duration = responseArray.getJSONObject(i).getInt("duration");
                         Log.d("book", "b,t,a,p,c::" + (book_id) + title + author + (published) + cover_url);
-                        books.add(new Book(book_id, title, author, published, cover_url));
+                        books.add(new Book(book_id, title, author, published, cover_url, duration));
                     }
                     updateView();
                 } catch (Exception e) {
@@ -135,7 +136,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             } else {
                 search = "";
                 Toast t = Toast.makeText(getApplicationContext(), "No results found...\n\nTry something else", Toast.LENGTH_SHORT);
-                t.setGravity(Gravity.CENTER,0,0);
+                t.setGravity(Gravity.CENTER, 0, 0);
                 View view = t.getView();
                 view.getBackground().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
                 TextView text = view.findViewById(android.R.id.message);

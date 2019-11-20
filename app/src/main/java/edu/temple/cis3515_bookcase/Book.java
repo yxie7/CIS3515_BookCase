@@ -9,13 +9,15 @@ public class Book implements Parcelable {
     String author;
     int published;
     String coverURL;
+    int duration;
 
-    public Book(int id, String title, String author, int published, String coverURL) {
+    public Book(int id, String title, String author, int published, String coverURL, int duration) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.published = published;
         this.coverURL = coverURL;
+        this.duration = duration;
     }
 
     protected Book(Parcel in) {
@@ -50,6 +52,7 @@ public class Book implements Parcelable {
         p.writeString(this.author);
         p.writeInt(this.published);
         p.writeString(this.coverURL);
+        p.writeInt(this.duration);
     }
 
     public int getId() {
@@ -90,5 +93,13 @@ public class Book implements Parcelable {
 
     public void setCoverURL(String coverURL) {
         this.coverURL = coverURL;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
