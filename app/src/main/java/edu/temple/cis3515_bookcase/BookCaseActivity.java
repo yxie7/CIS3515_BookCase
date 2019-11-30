@@ -2,6 +2,7 @@ package edu.temple.cis3515_bookcase;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +24,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener {
+public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick{
 
     FragmentManager fm;
     Fragment current1;
@@ -35,7 +36,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     Button btnSearch;
     String search = "";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +45,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         onePane = (findViewById(R.id.container2) == null);
         etSearch = (EditText) findViewById(R.id.etSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
-
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,5 +171,10 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             fm.beginTransaction().replace(R.id.container1, bl).commit();
             fm.beginTransaction().replace(R.id.container2, BookDetailsFragment.newInstance(books.get(currentBookPosition))).commit();
         }
+    }
+
+    @Override
+    public void play(Book book){
+
     }
 }

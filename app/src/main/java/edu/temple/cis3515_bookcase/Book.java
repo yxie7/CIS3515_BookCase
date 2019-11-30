@@ -26,6 +26,7 @@ public class Book implements Parcelable {
         author = in.readString();
         published = in.readInt();
         coverURL = in.readString();
+        duration = in.readInt();
     }
 
     public static final Creator<Book> CREATOR = new Creator<Book>() {

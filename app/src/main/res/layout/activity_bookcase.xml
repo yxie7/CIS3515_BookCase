@@ -5,13 +5,14 @@
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookCaseActivity" >
+    android:background="#CB000000"
+    tools:context=".BookCaseActivity">
 
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="28dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
         android:text="Search"
         app:layout_constraintBottom_toBottomOf="@+id/etSearch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,27 +21,57 @@
 
     <EditText
         android:id="@+id/etSearch"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:autofillHints="Search books"
+        android:backgroundTint="#FFFFFF"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/container1"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toStartOf="@+id/btnSearch"
-        app:layout_constraintHorizontal_bias="0.166"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.071" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/container1"
-        android:layout_width="407dp"
-        android:layout_height="501dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/clPlayback"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar">
+
+    </FrameLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/clPlayback"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:background="#BFFFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-    </FrameLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:maxHeight="2dip"
+        android:minHeight="2dip"
+        android:progressDrawable="@android:color/white"
+        android:thumbTint="#A50000"
+        app:layout_constraintEnd_toEndOf="@+id/btnSearch"
+        app:layout_constraintStart_toStartOf="@+id/etSearch"
+        app:layout_constraintTop_toBottomOf="@+id/etSearch" />
 </android.support.constraint.ConstraintLayout>
