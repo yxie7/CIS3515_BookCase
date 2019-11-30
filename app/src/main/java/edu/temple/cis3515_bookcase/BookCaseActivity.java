@@ -2,7 +2,6 @@ package edu.temple.cis3515_bookcase;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
