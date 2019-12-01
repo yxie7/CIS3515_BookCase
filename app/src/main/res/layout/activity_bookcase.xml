@@ -60,7 +60,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <SeekBar
-            android:id="@+id/seekBar"
+            android:id="@+id/sbNowPlaying"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -110,7 +110,7 @@
             android:adjustViewBounds="true"
             android:background="#00FFFFFF"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintBottom_toBottomOf="@+id/sbNowPlaying"
             app:layout_constraintEnd_toStartOf="@+id/ibtnStop"
             app:layout_constraintTop_toTopOf="@+id/tvNowPlaying"
             app:srcCompat="@drawable/btnplay" />

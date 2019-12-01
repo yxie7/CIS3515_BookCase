@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,14 +47,17 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     String search = "";
 
     int nowPlayingBookID;
-    String nowPlayingTitleAuthor;
+    String nowPlayingTitle;
+    String nowPlayingAuthor;
+    int nowPlayingDuration;
     int nowPlayingPosition;
-    TextView tvNowPlaying;
 
+    TextView tvNowPlaying;
     ImageButton ibtnPlayPause;
     ImageButton ibtnStop;
+    SeekBar sbNowPlaying;
 
-    Boolean nowPlaying = false;
+    Boolean nowPlaying;
     AudiobookService abs;
     AudiobookService.MediaControlBinder mcb;
     Intent audioBookPlayerIntent;
@@ -62,9 +66,8 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mcb = (AudiobookService.MediaControlBinder) service;
-            //abs = mcb.        getService()?
             connected = true;
-            //sb
+            mcb.setProgressHandler(progressHandler);
         }
 
         @Override
@@ -79,11 +82,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         audioBookPlayerIntent = new Intent(BookCaseActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
         bindService(audioBookPlayerIntent, connection, Context.BIND_AUTO_CREATE);
         Log.d("audiobook", "onstart, service connected?:" + connected);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+        updateNowPlaying();
     }
 
     @Override
@@ -95,6 +94,20 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         unbindService(connection);
     }
 
+    public void updateNowPlaying() {
+        if (nowPlayingTitle == null) {
+            nowPlayingTitle = "";
+            nowPlayingAuthor = "";
+        }
+        String nowPlayingText = "Now Playing: " + nowPlayingTitle + " - " + nowPlayingAuthor;
+        tvNowPlaying.setText(nowPlayingText);
+        if (nowPlaying) {
+            ibtnPlayPause.setImageResource(R.drawable.btnplay); //change to play image
+        } else {
+            ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,8 +115,8 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         fm = getSupportFragmentManager();
 
         onePane = (findViewById(R.id.container2) == null);
-        etSearch = (EditText) findViewById(R.id.etSearch);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
+        etSearch = findViewById(R.id.etSearch);
+        btnSearch = findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,7 +124,32 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             }
         });
 
+        nowPlaying = false;
         tvNowPlaying = findViewById(R.id.tvNowPlaying);
+        sbNowPlaying = findViewById(R.id.sbNowPlaying);
+        sbNowPlaying.setProgress(nowPlayingPosition);
+        sbNowPlaying.setMax(nowPlayingDuration);
+        sbNowPlaying.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                nowPlayingPosition = progress;
+                if (fromUser) {
+                    if (connected) {
+                        mcb.seekTo(nowPlayingPosition);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         ibtnPlayPause = findViewById(R.id.ibtnPlayPause);
         ibtnStop = findViewById(R.id.ibtnStop);
@@ -133,20 +171,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         } else {
             updateView();
         }
-
-        /*
-        if (twoPanes) {
-
-            Fragment blf = BookListFragment.newInstance(args_books);
-            getSupportFragmentManager().beginTransaction().replace(R.id.bookListContainer, blf).commit();
-            Fragment bdf = BookDetailsFragment.newInstance("");
-            getSupportFragmentManager().beginTransaction().replace(R.id.bookDetailsContainer, bdf).commit();
-
-        } else { //portrait mode
-            Fragment vpf = ViewPagerFragment.newInstance(args_books);
-            getSupportFragmentManager().beginTransaction().replace(R.id.viewPagerContainer, vpf).commit();
-        }
-        */
     }
 
     // Calls the public method in details fragment to display the selected book
@@ -189,7 +213,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     Handler responseHandler = new Handler((new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-
             JSONArray responseArray = (JSONArray) msg.obj;
             if (responseArray.length() > 0) {
                 try {
@@ -252,7 +275,13 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         startService(audioBookPlayerIntent);
         Log.d("audiobook", String.valueOf(book.getId()));
         if (connected) {
-            tvNowPlaying.setText("Now Playing: " + book.getTitle() + " - " + book.getAuthor());
+            nowPlayingBookID = book.getId();
+            nowPlayingTitle = book.getTitle();
+            nowPlayingAuthor = book.getAuthor();
+            nowPlayingDuration = book.getDuration();
+            sbNowPlaying.setMax(nowPlayingDuration);
+            sbNowPlaying.setProgress(0);
+            updateNowPlaying();
             mcb.play(book.getId());
             nowPlaying = mcb.isPlaying();
             ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
@@ -261,6 +290,11 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
     public void playpause() {
         if (connected) {
+            nowPlaying = mcb.isPlaying();
+            mcb.pause();
+            updateNowPlaying();
+            Log.d("audiobook", "playpause: " + mcb.isPlaying());
+            /*
             if (nowPlaying) {    //currently playing, going to pause
                 mcb.pause();
                 ibtnPlayPause.setImageResource(R.drawable.btnplay); //change to play image
@@ -270,13 +304,43 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                 ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
                 nowPlaying = mcb.isPlaying();
             }
+            */
         }
     }
 
     public void stop() {
         if (connected) {
-            nowPlaying = mcb.isPlaying();
             mcb.stop();
+            nowPlayingBookID = 0;
+            nowPlayingTitle = "";
+            nowPlayingAuthor = "";
+            nowPlayingDuration = 0;
+            sbNowPlaying.setProgress(0);
+            nowPlaying = mcb.isPlaying();
+            updateNowPlaying();
         }
     }
+
+    Handler progressHandler = new Handler((new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg != null) {
+                if (msg.obj instanceof AudiobookService.BookProgress) {
+                    AudiobookService.BookProgress nowPlayingProgressObj = (AudiobookService.BookProgress) msg.obj;
+                    Log.d("audiobook", "handleMessage: " + nowPlayingProgressObj.getProgress()+"/"+nowPlayingDuration);
+                    if (nowPlayingProgressObj.getProgress() < nowPlayingDuration) {
+                        if (connected) {
+                            sbNowPlaying.setProgress(nowPlayingPosition);
+                        }
+                    }
+                    if (nowPlayingProgressObj.getProgress() >= nowPlayingDuration) { //reached end of book
+                        if (connected) {
+                            stop();
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+    }));
 }
