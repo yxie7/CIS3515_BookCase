@@ -1,9 +1,14 @@
 package edu.temple.cis3515_bookcase;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,17 +28,62 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick{
+import edu.temple.audiobookplayer.AudiobookService;
+
+public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick {
 
     FragmentManager fm;
     Fragment current1;
     Fragment current2;
+
     int currentBookPosition = 0;
     Boolean onePane;
+
     ArrayList<Book> books;
     EditText etSearch;
     Button btnSearch;
     String search = "";
+
+    AudiobookService abs;
+    AudiobookService.MediaControlBinder mcb;
+    Intent audioBookPlayerIntent;
+    boolean connected;
+    ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mcb = (AudiobookService.MediaControlBinder) service;
+            //abs = mcb.        getService()?
+            connected = true;
+            //sb
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            connected = false;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        audioBookPlayerIntent = new Intent(BookCaseActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
+        bindService(audioBookPlayerIntent, connection, Context.BIND_AUTO_CREATE);
+        Log.d("audiobook", "onstart, service connected?:" + connected);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()) {
+            mcb.stop();
+        }
+        unbindService(connection);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +174,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                         int published = responseArray.getJSONObject(i).getInt("published");
                         String cover_url = responseArray.getJSONObject(i).getString("cover_url");
                         int duration = responseArray.getJSONObject(i).getInt("duration");
-                        Log.d("book", "b,t,a,p,c::" + (book_id) + title + author + (published) + cover_url);
                         books.add(new Book(book_id, title, author, published, cover_url, duration));
                     }
                     updateView();
@@ -173,7 +222,10 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     }
 
     @Override
-    public void play(Book book){
-
+    public void play(Book book) {
+        startService(audioBookPlayerIntent);
+        Log.d("audiobook", String.valueOf(book.getId()));
+        if (connected)
+            mcb.play(book.getId());
     }
 }
