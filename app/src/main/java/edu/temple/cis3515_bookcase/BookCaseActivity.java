@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,15 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     Button btnSearch;
     String search = "";
 
+    int nowPlayingBookID;
+    String nowPlayingTitleAuthor;
+    int nowPlayingPosition;
+    TextView tvNowPlaying;
+
+    ImageButton ibtnPlayPause;
+    ImageButton ibtnStop;
+
+    Boolean nowPlaying = false;
     AudiobookService abs;
     AudiobookService.MediaControlBinder mcb;
     Intent audioBookPlayerIntent;
@@ -101,6 +111,22 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             }
         });
 
+        tvNowPlaying = findViewById(R.id.tvNowPlaying);
+
+        ibtnPlayPause = findViewById(R.id.ibtnPlayPause);
+        ibtnStop = findViewById(R.id.ibtnStop);
+        ibtnPlayPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playpause();
+            }
+        });
+        ibtnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stop();
+            }
+        });
 
         if (savedInstanceState == null) {
             searchBooks();
@@ -225,7 +251,32 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     public void play(Book book) {
         startService(audioBookPlayerIntent);
         Log.d("audiobook", String.valueOf(book.getId()));
-        if (connected)
+        if (connected) {
+            tvNowPlaying.setText("Now Playing: " + book.getTitle() + " - " + book.getAuthor());
             mcb.play(book.getId());
+            nowPlaying = mcb.isPlaying();
+            ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
+        }
+    }
+
+    public void playpause() {
+        if (connected) {
+            if (nowPlaying) {    //currently playing, going to pause
+                mcb.pause();
+                ibtnPlayPause.setImageResource(R.drawable.btnplay); //change to play image
+                nowPlaying = mcb.isPlaying();
+            } else {  //currently paused
+                mcb.pause();
+                ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
+                nowPlaying = mcb.isPlaying();
+            }
+        }
+    }
+
+    public void stop() {
+        if (connected) {
+            nowPlaying = mcb.isPlaying();
+            mcb.stop();
+        }
     }
 }
