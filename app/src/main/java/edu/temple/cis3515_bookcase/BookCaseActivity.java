@@ -33,6 +33,11 @@ import java.util.ArrayList;
 import edu.temple.audiobookplayer.AudiobookService;
 
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick {
+    private static final String ID_KEY = "";
+    private static final String TITLE_KEY = "";
+    private static final String AUTHOR_KEY = "";
+    private static final String DURATION_KEY = "";
+    private static final String POSITION_KEY = "";
 
     FragmentManager fm;
     Fragment current1;
@@ -46,18 +51,18 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     Button btnSearch;
     String search = "";
 
-    int nowPlayingBookID;
-    String nowPlayingTitle;
-    String nowPlayingAuthor;
-    int nowPlayingDuration;
-    int nowPlayingPosition;
+    public static int nowPlayingBookID;
+    public static String nowPlayingTitle;
+    public static String nowPlayingAuthor;
+    public static int nowPlayingDuration;
+    public static int nowPlayingPosition;
+    public static Boolean nowPlaying;
 
     TextView tvNowPlaying;
     ImageButton ibtnPlayPause;
     ImageButton ibtnStop;
     SeekBar sbNowPlaying;
 
-    Boolean nowPlaying;
     AudiobookService abs;
     AudiobookService.MediaControlBinder mcb;
     Intent audioBookPlayerIntent;
@@ -77,20 +82,12 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        audioBookPlayerIntent = new Intent(BookCaseActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
-        bindService(audioBookPlayerIntent, connection, Context.BIND_AUTO_CREATE);
-        updateNowPlaying();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (isFinishing()) {
             mcb.stop();
+            unbindService(connection);
         }
-        unbindService(connection);
     }
 
     public void updateNowPlaying() {
@@ -123,11 +120,15 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             }
         });
 
-        nowPlaying = false;
+        if (nowPlaying == null){
+            nowPlaying = false;
+        }
         tvNowPlaying = findViewById(R.id.tvNowPlaying);
         sbNowPlaying = findViewById(R.id.sbNowPlaying);
         sbNowPlaying.setProgress(nowPlayingPosition);
         sbNowPlaying.setMax(nowPlayingDuration);
+
+
         sbNowPlaying.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -170,6 +171,12 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         } else {
             updateView();
         }
+
+        audioBookPlayerIntent = new Intent(BookCaseActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
+        if (!connected) {
+            bindService(audioBookPlayerIntent, connection, Context.BIND_AUTO_CREATE);
+        }
+        updateNowPlaying();
     }
 
     // Calls the public method in details fragment to display the selected book
@@ -273,14 +280,14 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     public void play(Book book) {
         startService(audioBookPlayerIntent);
         if (connected) {
-            sbNowPlaying.setProgress(0);
-            mcb.play(nowPlayingBookID);
-            nowPlaying = mcb.isPlaying();
-            sbNowPlaying.setMax(0);
             nowPlayingBookID = book.getId();
             nowPlayingTitle = book.getTitle();
             nowPlayingAuthor = book.getAuthor();
             nowPlayingDuration = book.getDuration();
+            sbNowPlaying.setProgress(0);
+            mcb.play(nowPlayingBookID);
+            nowPlaying = mcb.isPlaying();
+            sbNowPlaying.setMax(0);
             sbNowPlaying.setMax(nowPlayingDuration);
             updateNowPlaying();
         }
@@ -304,6 +311,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             sbNowPlaying.setProgress(0);
             nowPlaying = mcb.isPlaying();
             updateNowPlaying();
+            stopService(audioBookPlayerIntent);
         }
     }
 
@@ -313,7 +321,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             if (msg != null) {
                 if (msg.obj instanceof AudiobookService.BookProgress) {
                     AudiobookService.BookProgress nowPlayingProgressObj = (AudiobookService.BookProgress) msg.obj;
-                    Log.d("audiobook", "handleMessage: " + nowPlayingProgressObj.getProgress()+"/"+nowPlayingDuration);
+                    Log.d("audiobook", "handleMessage: " + nowPlayingProgressObj.getProgress() + "/" + nowPlayingDuration);
                     if (nowPlayingProgressObj.getProgress() < nowPlayingDuration) {
                         if (connected) {
                             sbNowPlaying.setProgress(nowPlayingPosition);
