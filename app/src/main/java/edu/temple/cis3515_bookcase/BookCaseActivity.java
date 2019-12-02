@@ -33,12 +33,6 @@ import java.util.ArrayList;
 import edu.temple.audiobookplayer.AudiobookService;
 
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick {
-    private static final String ID_KEY = "";
-    private static final String TITLE_KEY = "";
-    private static final String AUTHOR_KEY = "";
-    private static final String DURATION_KEY = "";
-    private static final String POSITION_KEY = "";
-
     FragmentManager fm;
     Fragment current1;
     Fragment current2;
@@ -51,19 +45,18 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     Button btnSearch;
     String search = "";
 
-    public static int nowPlayingBookID;
-    public static String nowPlayingTitle;
-    public static String nowPlayingAuthor;
-    public static int nowPlayingDuration;
-    public static int nowPlayingPosition;
-    public static Boolean nowPlaying;
+    int nowPlayingBookID;
+    String nowPlayingTitle;
+    String nowPlayingAuthor;
+    int nowPlayingDuration;
+    int nowPlayingPosition;
+    Boolean nowPlaying;
 
     TextView tvNowPlaying;
     ImageButton ibtnPlayPause;
     ImageButton ibtnStop;
     SeekBar sbNowPlaying;
 
-    AudiobookService abs;
     AudiobookService.MediaControlBinder mcb;
     Intent audioBookPlayerIntent;
     boolean connected;
@@ -105,6 +98,23 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("KEY_ID", nowPlayingBookID);
+        outState.putString("KEY_TITLE", nowPlayingTitle);
+        outState.putString("KEY_AUTHOR", nowPlayingAuthor);
+        outState.putInt("KEY_DURATION", nowPlayingDuration);
+        outState.putInt("KEY_POSITION", nowPlayingPosition);
+        outState.putBoolean("KEY_NOWPLAYING", nowPlaying);
+        outState.putBoolean("KEY_CONNECTED", connected);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookcase);
@@ -120,9 +130,19 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             }
         });
 
-        if (nowPlaying == null){
+        if (nowPlaying == null) {
             nowPlaying = false;
         }
+        if (savedInstanceState != null) {
+            nowPlayingBookID = savedInstanceState.getInt("KEY_ID");
+            nowPlayingTitle = savedInstanceState.getString("KEY_TITLE");
+            nowPlayingAuthor = savedInstanceState.getString("KEY_AUTHOR");
+            nowPlayingDuration = savedInstanceState.getInt("KEY_DURATION");
+            nowPlayingPosition = savedInstanceState.getInt("KEY_POSITION");
+            nowPlaying = savedInstanceState.getBoolean("KEY_NOWPLAYING");
+            //connected = savedInstanceState.getBoolean("KEY_CONNECTED");
+        }
+
         tvNowPlaying = findViewById(R.id.tvNowPlaying);
         sbNowPlaying = findViewById(R.id.sbNowPlaying);
         sbNowPlaying.setProgress(nowPlayingPosition);
@@ -323,6 +343,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                     AudiobookService.BookProgress nowPlayingProgressObj = (AudiobookService.BookProgress) msg.obj;
                     Log.d("audiobook", "handleMessage: " + nowPlayingProgressObj.getProgress() + "/" + nowPlayingDuration);
                     if (nowPlayingProgressObj.getProgress() < nowPlayingDuration) {
+                        nowPlayingPosition = nowPlayingProgressObj.getProgress();
                         if (connected) {
                             sbNowPlaying.setProgress(nowPlayingPosition);
                         }
