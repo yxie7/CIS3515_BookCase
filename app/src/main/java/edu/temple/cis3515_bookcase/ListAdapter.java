@@ -1,6 +1,7 @@
 package edu.temple.cis3515_bookcase;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -39,6 +40,7 @@ public class ListAdapter extends BaseAdapter {
         label.setText(books.get(position).getTitle());
         label.setTextSize(20);
         label.setPadding(16, 25, 16, 25);
+        label.setTextColor(Color.WHITE);
 
         return label;
     }

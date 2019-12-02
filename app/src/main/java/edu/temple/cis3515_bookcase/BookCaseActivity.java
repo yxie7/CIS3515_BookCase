@@ -81,7 +81,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         super.onStart();
         audioBookPlayerIntent = new Intent(BookCaseActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
         bindService(audioBookPlayerIntent, connection, Context.BIND_AUTO_CREATE);
-        Log.d("audiobook", "onstart, service connected?:" + connected);
         updateNowPlaying();
     }
 
@@ -104,7 +103,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         if (nowPlaying) {
             ibtnPlayPause.setImageResource(R.drawable.btnplay); //change to play image
         } else {
-            ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
+            ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image
         }
     }
 
@@ -273,18 +272,17 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     @Override
     public void play(Book book) {
         startService(audioBookPlayerIntent);
-        Log.d("audiobook", String.valueOf(book.getId()));
         if (connected) {
+            sbNowPlaying.setProgress(0);
+            mcb.play(nowPlayingBookID);
+            nowPlaying = mcb.isPlaying();
+            sbNowPlaying.setMax(0);
             nowPlayingBookID = book.getId();
             nowPlayingTitle = book.getTitle();
             nowPlayingAuthor = book.getAuthor();
             nowPlayingDuration = book.getDuration();
             sbNowPlaying.setMax(nowPlayingDuration);
-            sbNowPlaying.setProgress(0);
             updateNowPlaying();
-            mcb.play(book.getId());
-            nowPlaying = mcb.isPlaying();
-            ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
         }
     }
 
@@ -293,18 +291,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlaying = mcb.isPlaying();
             mcb.pause();
             updateNowPlaying();
-            Log.d("audiobook", "playpause: " + mcb.isPlaying());
-            /*
-            if (nowPlaying) {    //currently playing, going to pause
-                mcb.pause();
-                ibtnPlayPause.setImageResource(R.drawable.btnplay); //change to play image
-                nowPlaying = mcb.isPlaying();
-            } else {  //currently paused
-                mcb.pause();
-                ibtnPlayPause.setImageResource(R.drawable.btnpause); //change to pause image, going to resume
-                nowPlaying = mcb.isPlaying();
-            }
-            */
         }
     }
 
