@@ -99,6 +99,18 @@
             app:layout_constraintStart_toEndOf="@+id/ibtnPlay"
             app:layout_constraintTop_toTopOf="@+id/ibtnPlay" />
 
+        <ImageButton
+            android:id="@+id/ibtnDownloadDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/btndownload"
+            app:layout_constraintBottom_toTopOf="@+id/tvDuration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -26,13 +27,20 @@ import android.widget.Toast;
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.temple.audiobookplayer.AudiobookService;
 
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick {
+    SharedPreferences pref;
+    String internalFilename = "bookmark";
+    File file;
+    List<Object> preferences;
+
     FragmentManager fm;
     Fragment current1;
     Fragment current2;
@@ -56,6 +64,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     ImageButton ibtnPlayPause;
     ImageButton ibtnStop;
     SeekBar sbNowPlaying;
+    ImageButton ibtnDownloadDelete;
 
     AudiobookService.MediaControlBinder mcb;
     Intent audioBookPlayerIntent;
@@ -118,6 +127,9 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookcase);
+
+        file = new File(getFilesDir(), internalFilename);
+
         fm = getSupportFragmentManager();
 
         onePane = (findViewById(R.id.container2) == null);
@@ -129,6 +141,22 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                 searchBooks();
             }
         });
+
+/*
+        if (file.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    preferences.add(line);
+                }
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+*/
+
 
         if (nowPlaying == null) {
             nowPlaying = false;
@@ -313,6 +341,25 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         }
     }
 
+    @Override
+    public void play(Book book, File mp3) {
+        Log.d("mp3", "Playing from "+book.getTitle()+"mp3");
+        startService(audioBookPlayerIntent);
+        if (connected) {
+            nowPlayingBookID = book.getId();
+            nowPlayingTitle = book.getTitle();
+            nowPlayingAuthor = book.getAuthor();
+            nowPlayingDuration = book.getDuration();
+            sbNowPlaying.setProgress(0);
+            mcb.play(mp3);
+            nowPlaying = mcb.isPlaying();
+            sbNowPlaying.setMax(0);
+            sbNowPlaying.setMax(nowPlayingDuration);
+            updateNowPlaying();
+
+        }
+    }
+
     public void playpause() {
         if (connected) {
             nowPlaying = mcb.isPlaying();
@@ -341,7 +388,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             if (msg != null) {
                 if (msg.obj instanceof AudiobookService.BookProgress) {
                     AudiobookService.BookProgress nowPlayingProgressObj = (AudiobookService.BookProgress) msg.obj;
-                    Log.d("audiobook", "handleMessage: " + nowPlayingProgressObj.getProgress() + "/" + nowPlayingDuration);
                     if (nowPlayingProgressObj.getProgress() < nowPlayingDuration) {
                         nowPlayingPosition = nowPlayingProgressObj.getProgress();
                         if (connected) {
@@ -358,4 +404,5 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             return false;
         }
     }));
+
 }
