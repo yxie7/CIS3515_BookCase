@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -37,8 +39,8 @@ import edu.temple.audiobookplayer.AudiobookService;
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    String internalFilename = "bookmark";
-    File file;
+    SQLiteDatabase db;
+    SQLiteOpenHelper helper;
 
     FragmentManager fm;
     Fragment current1;
@@ -63,7 +65,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     ImageButton ibtnPlayPause;
     ImageButton ibtnStop;
     SeekBar sbNowPlaying;
-    ImageButton ibtnDownloadDelete;
 
     AudiobookService.MediaControlBinder mcb;
     Intent audioBookPlayerIntent;
@@ -74,6 +75,24 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             mcb = (AudiobookService.MediaControlBinder) service;
             connected = true;
             mcb.setProgressHandler(progressHandler);
+            if (nowPlayingBookID > 0) {
+                File bookMP3 = new File(getFilesDir(), nowPlayingBookID + ".mp3");
+                if (bookMP3.exists()) {
+                    Log.d("mp3", "position" + nowPlayingPosition);
+                    Toast t = Toast.makeText(getApplicationContext(), "Playing from MP3 file...", Toast.LENGTH_SHORT);
+                    t.show();
+                    nowPlayingPosition = nowPlayingPosition - 10;
+                    Log.d("mp3", "position" + nowPlayingPosition);
+                    mcb.play(bookMP3, nowPlayingPosition);
+                    nowPlaying = true;
+                } else {
+                    Toast t = Toast.makeText(getApplicationContext(), "Streaming audiobook...", Toast.LENGTH_SHORT);
+                    t.show();
+                    mcb.play(nowPlayingBookID, 0);
+                    nowPlaying = true;
+                }
+            }
+            updateNowPlaying();
         }
 
         @Override
@@ -86,6 +105,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     protected void onDestroy() {
         super.onDestroy();
         if (isFinishing()) {
+            saveNowPlaying();
             mcb.stop();
             unbindService(connection);
         }
@@ -127,8 +147,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookcase);
 
-        file = new File(getFilesDir(), internalFilename);
-
         fm = getSupportFragmentManager();
 
         onePane = (findViewById(R.id.container2) == null);
@@ -141,22 +159,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                 searchBooks(search);
             }
         });
-
-/*
-        if (file.exists()) {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    preferences.add(line);
-                }
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-*/
-
 
         if (nowPlaying == null) {
             nowPlaying = false;
@@ -223,18 +225,28 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         });
 
         if (savedInstanceState == null) {
-            search = pref.getString("KEY_SEARCH","");
+            search = pref.getString("KEY_SEARCH", "");
             etSearch.setText(search);
             searchBooks(search);
         } else {
             updateView();
         }
+        updateNowPlaying();
+    }
 
-        audioBookPlayerIntent = new Intent(BookCaseActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        audioBookPlayerIntent = new Intent(BookCaseActivity.this, AudiobookService.class);
         if (!connected) {
             bindService(audioBookPlayerIntent, connection, Context.BIND_AUTO_CREATE);
+            startService(audioBookPlayerIntent);
         }
-        updateNowPlaying();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     // Calls the public method in details fragment to display the selected book
@@ -345,6 +357,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         editor.putInt("KEY_POSITION", nowPlayingPosition);
         editor.putBoolean("KEY_NOWPLAYING", nowPlaying);
         editor.commit();
+        Log.d("mp3", "savedpos" + nowPlayingPosition);
     }
 
     @Override
@@ -389,19 +402,21 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlaying = mcb.isPlaying();
             mcb.pause();
             updateNowPlaying();
+            saveNowPlaying();
         }
     }
 
     public void stop() {
         if (connected) {
             mcb.stop();
-            nowPlayingBookID = 0;
+            nowPlayingBookID = -1;
             nowPlayingTitle = "";
             nowPlayingAuthor = "";
-            nowPlayingDuration = 0;
+            nowPlayingDuration = -1;
             sbNowPlaying.setProgress(0);
             nowPlaying = mcb.isPlaying();
             updateNowPlaying();
+            saveNowPlaying();
             stopService(audioBookPlayerIntent);
         }
     }

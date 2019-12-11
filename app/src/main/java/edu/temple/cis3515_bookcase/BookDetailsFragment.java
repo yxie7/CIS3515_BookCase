@@ -64,7 +64,7 @@ public class BookDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             book = getArguments().getParcelable(ARG_BOOK);
-            bookMP3 = new File(getContext().getFilesDir(), book.getTitle() + ".mp3");
+            bookMP3 = new File(getContext().getFilesDir(), book.getId() + ".mp3");
 
         }
     }
@@ -73,7 +73,7 @@ public class BookDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_book_details, container, false);
-        bookMP3 = new File(getContext().getFilesDir(), book.getTitle() + ".mp3");
+        bookMP3 = new File(getContext().getFilesDir(), book.getId() + ".mp3");
         return v;
     }
 
@@ -91,7 +91,6 @@ public class BookDetailsFragment extends Fragment {
                         @Override
                         public void run() {
                             Toast t = Toast.makeText(getActivity(), "Playing from MP3 file...", Toast.LENGTH_SHORT);
-                            //t.setGravity(Gravity.CENTER, 0, 0);
                             t.show();
                         }
                     });
@@ -101,7 +100,6 @@ public class BookDetailsFragment extends Fragment {
                         @Override
                         public void run() {
                             Toast t = Toast.makeText(getActivity(), "Streaming audiobook...", Toast.LENGTH_SHORT);
-                            //t.setGravity(Gravity.CENTER, 0, 0);
                             t.show();
                         }
                     });
