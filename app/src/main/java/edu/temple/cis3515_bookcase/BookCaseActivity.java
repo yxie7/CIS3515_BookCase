@@ -31,15 +31,14 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.temple.audiobookplayer.AudiobookService;
 
 public class BookCaseActivity extends AppCompatActivity implements BookListFragment.OnListClickListener, BookDetailsFragment.onPlayClick {
     SharedPreferences pref;
+    SharedPreferences.Editor editor;
     String internalFilename = "bookmark";
     File file;
-    List<Object> preferences;
 
     FragmentManager fm;
     Fragment current1;
@@ -138,7 +137,8 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchBooks();
+                search = etSearch.getText().toString();
+                searchBooks(search);
             }
         });
 
@@ -161,7 +161,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         if (nowPlaying == null) {
             nowPlaying = false;
         }
-        if (savedInstanceState != null) {
+        /*if (savedInstanceState != null) {
             nowPlayingBookID = savedInstanceState.getInt("KEY_ID");
             nowPlayingTitle = savedInstanceState.getString("KEY_TITLE");
             nowPlayingAuthor = savedInstanceState.getString("KEY_AUTHOR");
@@ -169,7 +169,15 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlayingPosition = savedInstanceState.getInt("KEY_POSITION");
             nowPlaying = savedInstanceState.getBoolean("KEY_NOWPLAYING");
             //connected = savedInstanceState.getBoolean("KEY_CONNECTED");
-        }
+        }*/
+
+        pref = getPreferences(MODE_PRIVATE);
+        nowPlayingBookID = pref.getInt("KEY_ID", -1);
+        nowPlayingTitle = pref.getString("KEY_TITLE", null);
+        nowPlayingAuthor = pref.getString("KEY_AUTHOR", null);
+        nowPlayingDuration = pref.getInt("KEY_DURATION", -1);
+        nowPlayingPosition = pref.getInt("KEY_POSITION", -1);
+        nowPlaying = pref.getBoolean("KEY_NOWPLAYING", false);
 
         tvNowPlaying = findViewById(R.id.tvNowPlaying);
         sbNowPlaying = findViewById(R.id.sbNowPlaying);
@@ -215,7 +223,9 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         });
 
         if (savedInstanceState == null) {
-            searchBooks();
+            search = pref.getString("KEY_SEARCH","");
+            etSearch.setText(search);
+            searchBooks(search);
         } else {
             updateView();
         }
@@ -234,15 +244,14 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     }
 
     // Empties out the ArrayList of books, then searches retrieves and populates it with book from api
-    public void searchBooks() {
+    public void searchBooks(final String query) {
         books = new ArrayList<>();
         Thread t = new Thread() {
             @Override
             public void run() {
                 URL url;
                 try {
-                    search = etSearch.getText().toString();
-                    url = new URL(" https://kamorris.com/lab/audlib/booksearch.php?search=" + search);
+                    url = new URL(" https://kamorris.com/lab/audlib/booksearch.php?search=" + query);
                     BufferedReader r = new BufferedReader(
                             new InputStreamReader(
                                     url.openStream()));
@@ -262,6 +271,9 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             }
         };
         t.start();
+        editor = pref.edit();
+        editor.putString("KEY_SEARCH", query);
+        editor.commit();
     }
 
     Handler responseHandler = new Handler((new Handler.Callback() {
@@ -324,6 +336,17 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         }
     }
 
+    public void saveNowPlaying() {
+        editor = pref.edit();
+        editor.putInt("KEY_ID", nowPlayingBookID);
+        editor.putString("KEY_TITLE", nowPlayingTitle);
+        editor.putString("KEY_AUTHOR", nowPlayingAuthor);
+        editor.putInt("KEY_DURATION", nowPlayingDuration);
+        editor.putInt("KEY_POSITION", nowPlayingPosition);
+        editor.putBoolean("KEY_NOWPLAYING", nowPlaying);
+        editor.commit();
+    }
+
     @Override
     public void play(Book book) {
         startService(audioBookPlayerIntent);
@@ -338,12 +361,13 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             sbNowPlaying.setMax(0);
             sbNowPlaying.setMax(nowPlayingDuration);
             updateNowPlaying();
+            saveNowPlaying();
         }
     }
 
     @Override
     public void play(Book book, File mp3) {
-        Log.d("mp3", "Playing from "+book.getTitle()+"mp3");
+        Log.d("mp3", "Playing from " + book.getTitle() + "mp3");
         startService(audioBookPlayerIntent);
         if (connected) {
             nowPlayingBookID = book.getId();
@@ -356,7 +380,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             sbNowPlaying.setMax(0);
             sbNowPlaying.setMax(nowPlayingDuration);
             updateNowPlaying();
-
+            saveNowPlaying();
         }
     }
 

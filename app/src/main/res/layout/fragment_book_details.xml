@@ -48,7 +48,8 @@
             android:src="@drawable/btnplay"
             app:layout_constraintBottom_toBottomOf="@id/tvYear"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tvAuthor"
@@ -91,25 +92,27 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:text="Title"
             android:textAlignment="center"
             android:textColor="#F44336"
             android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/ibtnPlay"
+            app:layout_constraintStart_toEndOf="@+id/ibtnDownloadDelete"
             app:layout_constraintTop_toTopOf="@+id/ibtnPlay" />
 
         <ImageButton
             android:id="@+id/ibtnDownloadDelete"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:src="@drawable/btndownload"
-            app:layout_constraintBottom_toTopOf="@+id/tvDuration"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/ibtnPlay"
+            app:layout_constraintStart_toEndOf="@+id/ibtnPlay"
+            app:layout_constraintTop_toTopOf="@+id/ibtnPlay" />
 
     </android.support.constraint.ConstraintLayout>
 

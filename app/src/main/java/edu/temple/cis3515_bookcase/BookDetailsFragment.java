@@ -87,8 +87,24 @@ public class BookDetailsFragment extends Fragment {
             public void onClick(View v) {
                 if (bookMP3.exists()) {
                     ibtnPlayListener.play(book, bookMP3);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast t = Toast.makeText(getActivity(), "Playing from MP3 file...", Toast.LENGTH_SHORT);
+                            //t.setGravity(Gravity.CENTER, 0, 0);
+                            t.show();
+                        }
+                    });
                 } else {
                     ibtnPlayListener.play(book);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast t = Toast.makeText(getActivity(), "Streaming audiobook...", Toast.LENGTH_SHORT);
+                            //t.setGravity(Gravity.CENTER, 0, 0);
+                            t.show();
+                        }
+                    });
                 }
             }
         });
