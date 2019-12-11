@@ -8,12 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -86,7 +88,7 @@ public class BookDetailsFragment extends Fragment {
                 if (bookMP3.exists()) {
                     ibtnPlayListener.play(book, bookMP3);
                 } else {
-                    //ibtnPlayListener.play(book);
+                    ibtnPlayListener.play(book);
                 }
             }
         });
@@ -102,11 +104,30 @@ public class BookDetailsFragment extends Fragment {
                         Log.d("mp3", bookMP3.getName() + " exists? " + bookMP3.exists());
                         if (bookMP3.exists()) {
                             bookMP3.delete();
-                            Log.d("mp3", "Deleting " + bookMP3.getName());
-                            Log.d("mp3", bookMP3.getName() + " exists? " + bookMP3.exists());
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ibtnDownloadDelete.setImageResource(R.drawable.btndownload);
+                                }
+                            });
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast t = Toast.makeText(getActivity(), "Deleting MP3 file...", Toast.LENGTH_SHORT);
+                                    //t.setGravity(Gravity.CENTER, 0, 0);
+                                    t.show();
+                                }
+                            });
                         } else { // book is not downloaded
                             try {
-                                Log.d("mp3", "Downloading " + bookMP3.getName());
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast t = Toast.makeText(getActivity(), "Downloading MP3 file...", Toast.LENGTH_SHORT);
+                                        //t.setGravity(Gravity.CENTER, 0, 0);
+                                        t.show();
+                                    }
+                                });
                                 URL url = new URL(" https://kamorris.com/lab/audlib/download.php?id=" + book.getId());
                                 URLConnection urlconn = url.openConnection();
                                 byte[] buffer = new byte[urlconn.getContentLength()];
@@ -117,8 +138,12 @@ public class BookDetailsFragment extends Fragment {
                                 out.write(buffer);
                                 out.flush();
                                 out.close();
-                                Log.d("mp3", bookMP3.getName() + " exists? " + bookMP3.exists());
-                                updateDownloadDelete();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ibtnDownloadDelete.setImageResource(R.drawable.btntrash);
+                                    }
+                                });
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -126,8 +151,6 @@ public class BookDetailsFragment extends Fragment {
                     }
                 };
                 ddThread.start();
-                updateDownloadDelete();
-
             }
         });
     }
