@@ -81,6 +81,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                     Toast t = Toast.makeText(getApplicationContext(), "Playing from MP3 file...", Toast.LENGTH_SHORT);
                     t.show();
                     nowPlayingPosition = nowPlayingPosition - 10;
+                    if (nowPlayingPosition < 0) nowPlayingPosition = 0;
                     Log.d("mp3", "position" + nowPlayingPosition);
                     mcb.play(bookMP3, nowPlayingPosition);
                     nowPlaying = true;
@@ -382,6 +383,8 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             sbNowPlaying.setMax(nowPlayingDuration);
             updateNowPlaying();
             saveNowPlaying();
+            saveDB(nowPlayingBookID, nowPlayingPosition);
+            Log.d("mp3", "playing id " + nowPlayingBookID + " pos " + nowPlayingPosition);
         }
     }
 
@@ -404,13 +407,14 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             sbNowPlaying.setMax(nowPlayingDuration);
             updateNowPlaying();
             saveNowPlaying();
-
             saveDB(nowPlayingBookID, nowPlayingPosition);
+            Log.d("mp3", "playing id " + nowPlayingBookID + " pos " + nowPlayingPosition);
+
         }
     }
 
     public void saveDB(int id, int position) {
-        Log.d("db", "saving book " + id + nowPlayingPosition);
+        Log.d("db", "saving book " + id + ": " + nowPlayingPosition);
         Log.d("db", "saved: " + helper.insertBook(db, id, position));
     }
 
@@ -435,6 +439,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlaying = mcb.isPlaying();
             updateNowPlaying();
             saveNowPlaying();
+            saveDB(nowPlayingBookID, 0);
             stopService(audioBookPlayerIntent);
         }
     }
@@ -449,6 +454,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
                         nowPlayingPosition = nowPlayingProgressObj.getProgress();
                         if (connected) {
                             sbNowPlaying.setProgress(nowPlayingPosition);
+                            saveDB(nowPlayingBookID, nowPlayingPosition);
                         }
                     }
                     if (nowPlayingProgressObj.getProgress() >= nowPlayingDuration) { //reached end of book
