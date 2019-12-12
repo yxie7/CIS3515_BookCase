@@ -48,17 +48,21 @@ public class dbHelper extends SQLiteOpenHelper {
         long _id = db.insertWithOnConflict(dbBook.BookEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         long result;
         if (_id == -1) {
-             result = db.update(dbBook.BookEntry.TABLE_NAME, values, "id=" + id, null);
+            result = db.update(dbBook.BookEntry.TABLE_NAME, values, "id=" + id, null);
             if (result != -1)
                 return true;
         }
         return false;
     }
 
-    public Cursor getBook(SQLiteDatabase db, int id) {
-        String query = dbBook.SQL_SELECT_BOOK(id);
+    public int getBookPosition(SQLiteDatabase db, int id) {
+        int pos = -1;
+        String query = dbBook.SQL_SELECT_BOOK_POSITION(id);
         Cursor cursor = db.rawQuery(query, null);
-        cursor = db.query(dbBook.BookEntry.TABLE_NAME, new String[]{"id, position"}, "" + id, null, null, null, null);
-        return cursor;
+        cursor = db.query(dbBook.BookEntry.TABLE_NAME, new String[]{"position"}, "id=" + id, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            pos = cursor.getInt(0);
+        }
+        return pos;
     }
 }

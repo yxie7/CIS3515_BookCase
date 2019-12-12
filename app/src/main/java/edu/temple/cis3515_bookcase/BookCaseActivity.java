@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -106,6 +105,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
         super.onDestroy();
         if (isFinishing()) {
             saveNowPlaying();
+            saveDB(nowPlayingBookID, nowPlayingPosition);
             mcb.stop();
             unbindService(connection);
         }
@@ -365,6 +365,10 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
     @Override
     public void play(Book book) {
+        int pos = helper.getBookPosition(db, book.getId());
+        if (pos == -1) {
+            pos = 0;
+        }
         startService(audioBookPlayerIntent);
         if (connected) {
             nowPlayingBookID = book.getId();
@@ -372,7 +376,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlayingAuthor = book.getAuthor();
             nowPlayingDuration = book.getDuration();
             sbNowPlaying.setProgress(0);
-            mcb.play(nowPlayingBookID);
+            mcb.play(nowPlayingBookID, pos);
             nowPlaying = mcb.isPlaying();
             sbNowPlaying.setMax(0);
             sbNowPlaying.setMax(nowPlayingDuration);
@@ -383,7 +387,10 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
     @Override
     public void play(Book book, File mp3) {
-        Log.d("mp3", "Playing from " + book.getTitle() + "mp3");
+        int pos = helper.getBookPosition(db, book.getId());
+        if (pos == -1) {
+            pos = 0;
+        }
         startService(audioBookPlayerIntent);
         if (connected) {
             nowPlayingBookID = book.getId();
@@ -391,7 +398,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlayingAuthor = book.getAuthor();
             nowPlayingDuration = book.getDuration();
             sbNowPlaying.setProgress(0);
-            mcb.play(mp3);
+            mcb.play(mp3, pos);
             nowPlaying = mcb.isPlaying();
             sbNowPlaying.setMax(0);
             sbNowPlaying.setMax(nowPlayingDuration);
@@ -400,11 +407,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
             saveDB(nowPlayingBookID, nowPlayingPosition);
         }
-    }
-
-    public Cursor getBookPostionFromDB(int id) {
-        Cursor cursor = db.query(dbBook.BookEntry.TABLE_NAME, new String[]{"_id", dbBook.BookEntry.COLUMN_NAME_ID}, null, null, null, null, null);
-        return cursor;
     }
 
     public void saveDB(int id, int position) {
@@ -423,18 +425,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
     }
 
     public void stop() {
-        Cursor cursor = helper.getBook(db, nowPlayingBookID);
-
-        if (cursor != null && cursor.moveToNext()) {
-            cursor.moveToNext();
-            int col1 = cursor.getInt(0);
-            int col2 = cursor.getInt(1);
-            Log.d("db", col1 + "," + col2);
-
-        } else
-            Log.d("db", "cursor null or empty");
-
-
         if (connected) {
             mcb.stop();
             nowPlayingBookID = -1;
@@ -447,8 +437,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             saveNowPlaying();
             stopService(audioBookPlayerIntent);
         }
-
-
     }
 
     Handler progressHandler = new Handler((new Handler.Callback() {

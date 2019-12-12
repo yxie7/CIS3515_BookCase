@@ -2,6 +2,7 @@ package edu.temple.cis3515_bookcase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
@@ -96,6 +97,7 @@ public class BookDetailsFragment extends Fragment {
         ibtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (bookMP3.exists()) {
                     ibtnPlayListener.play(book, bookMP3);
                     getActivity().runOnUiThread(new Runnable() {
@@ -115,6 +117,7 @@ public class BookDetailsFragment extends Fragment {
                         }
                     });
                 }
+
             }
         });
 

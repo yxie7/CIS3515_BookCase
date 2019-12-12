@@ -14,9 +14,9 @@ public final class dbBook {
     public static final String SQL_DELETE_BOOKS =
             "DROP TABLE IF EXISTS " + BookEntry.TABLE_NAME;
 
-    public static String SQL_SELECT_BOOK(int bookID) {
+    public static String SQL_SELECT_BOOK_POSITION(int bookID) {
         String query =
-                "SELECT * FROM " + BookEntry.TABLE_NAME +
+                "SELECT position FROM " + BookEntry.TABLE_NAME +
                         " WHERE " + BookEntry.COLUMN_NAME_ID + "=" + bookID;
         return query;
     }
