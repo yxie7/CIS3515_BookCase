@@ -366,10 +366,6 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
 
     @Override
     public void play(Book book) {
-        int pos = helper.getBookPosition(db, book.getId());
-        if (pos == -1) {
-            pos = 0;
-        }
         startService(audioBookPlayerIntent);
         if (connected) {
             nowPlayingBookID = book.getId();
@@ -377,7 +373,7 @@ public class BookCaseActivity extends AppCompatActivity implements BookListFragm
             nowPlayingAuthor = book.getAuthor();
             nowPlayingDuration = book.getDuration();
             sbNowPlaying.setProgress(0);
-            mcb.play(nowPlayingBookID, pos);
+            mcb.play(nowPlayingBookID);
             nowPlaying = mcb.isPlaying();
             sbNowPlaying.setMax(0);
             sbNowPlaying.setMax(nowPlayingDuration);
