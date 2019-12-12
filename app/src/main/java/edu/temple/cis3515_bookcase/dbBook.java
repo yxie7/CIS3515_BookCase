@@ -7,8 +7,7 @@ public final class dbBook {
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_BOOKS =
             "CREATE TABLE " + BookEntry.TABLE_NAME + " (" +
-                    "PKID INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
-                    BookEntry.COLUMN_NAME_ID + " INTEGER" + COMMA_SEP +
+                    BookEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
                     BookEntry.COLUMN_NAME_POSITION + " INTEGER" +
                     " )";
 

@@ -14,14 +14,15 @@ public class dbHelper extends SQLiteOpenHelper {
     public dbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onOpen(SQLiteDatabase database) {
         super.onOpen(database);
-        if(Build.VERSION.SDK_INT >= 28)
-        {
+        if (Build.VERSION.SDK_INT >= 28) {
             database.disableWriteAheadLogging();
         }
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(dbBook.SQL_CREATE_BOOKS);
@@ -44,11 +45,14 @@ public class dbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(dbBook.BookEntry.COLUMN_NAME_ID, id);
         values.put(dbBook.BookEntry.COLUMN_NAME_POSITION, position);
-
-        long result = db.insert(dbBook.BookEntry.TABLE_NAME, null, values);
-        if (result == -1)
-            return false;
-        return true;
+        long _id = db.insertWithOnConflict(dbBook.BookEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        long result;
+        if (_id == -1) {
+             result = db.update(dbBook.BookEntry.TABLE_NAME, values, "id=" + id, null);
+            if (result != -1)
+                return true;
+        }
+        return false;
     }
 
     public Cursor getBook(SQLiteDatabase db, int id) {
