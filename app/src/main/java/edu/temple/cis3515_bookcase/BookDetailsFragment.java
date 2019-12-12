@@ -1,6 +1,9 @@
 package edu.temple.cis3515_bookcase;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 
 
 public class BookDetailsFragment extends Fragment {
+    SQLiteDatabase db;
+    SQLiteOpenHelper helper;
+
     View v;
 
     public static final String ARG_BOOK = "parcelable book string";
@@ -59,6 +64,10 @@ public class BookDetailsFragment extends Fragment {
         return fragment;
     }
 
+    public interface saveDB {
+        void saveDB(int id, String title, String author, int duration, int position);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +76,8 @@ public class BookDetailsFragment extends Fragment {
             bookMP3 = new File(getContext().getFilesDir(), book.getId() + ".mp3");
 
         }
+        helper = new dbHelper(getContext());
+        db = helper.getWritableDatabase();
     }
 
     @Override
